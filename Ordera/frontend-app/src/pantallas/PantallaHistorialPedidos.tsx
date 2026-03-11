@@ -4,17 +4,20 @@ import { api } from "../servicios/api";
 
 export default function PantallaHistorialPedidos(){
 
- const [pedidos,setPedidos] = useState([]);
+ const [pedidos,setPedidos] = useState<any[]>([]);
 
  const obtenerPedidos = async () => {
 
   try{
 
    const res = await api.get("/pedidos");
+
    setPedidos(res.data);
 
   }catch(error){
-   console.log(error);
+
+   console.log("Error cargando pedidos",error);
+
   }
 
  };
@@ -33,10 +36,15 @@ export default function PantallaHistorialPedidos(){
     data={pedidos}
     keyExtractor={(item:any)=>item.id.toString()}
     renderItem={({item}:any)=>(
+
      <View style={styles.card}>
 
       <Text style={styles.cliente}>
-       Cliente: {item.cliente_id}
+       Cliente: {item.Cliente?.nombre}
+      </Text>
+
+      <Text>
+       Usuario: {item.Usuario?.usuario}
       </Text>
 
       <Text>
@@ -44,10 +52,11 @@ export default function PantallaHistorialPedidos(){
       </Text>
 
       <Text>
-       Estado: {item.estado_id}
+       Estado: {item.Estado?.nombre}
       </Text>
 
      </View>
+
     )}
    />
 

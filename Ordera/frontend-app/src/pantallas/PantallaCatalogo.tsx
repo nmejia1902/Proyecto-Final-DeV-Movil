@@ -1,13 +1,31 @@
 import { View, FlatList } from "react-native";
+import { useEffect, useState } from "react";
+import { api } from "../servicios/api";
 import TarjetaProducto from "../componentes/TarjetaProducto";
 
-const productos = [
- {id:1,nombre:"Torta chocolate",precio:500},
- {id:2,nombre:"Brownie",precio:350},
- {id:3,nombre:"Cheesecake",precio:450}
-];
-
 export default function PantallaCatalogo(){
+
+ const [productos,setProductos] = useState<any[]>([]);
+
+ useEffect(()=>{
+  cargarProductos();
+ },[]);
+
+ const cargarProductos = async () => {
+
+  try{
+
+   const res = await api.get("/productos");
+
+   setProductos(res.data);
+
+  }catch(error){
+
+   console.log("Error cargando productos",error);
+
+  }
+
+ };
 
  return(
 

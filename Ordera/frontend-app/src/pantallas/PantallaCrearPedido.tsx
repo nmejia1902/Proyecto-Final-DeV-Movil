@@ -6,7 +6,7 @@ import ItemProductoPedido from "../componentes/ItemProductoPedido";
 
 export default function PantallaCrearPedido({ navigation }: any) {
 
- const { cliente, setCliente, productos, total } = useContext(PedidoContext);
+ const { cliente, setCliente, productos, total, confirmarPedido } = useContext(PedidoContext);
 
  return (
   <View style={styles.container}>
@@ -41,7 +41,7 @@ export default function PantallaCrearPedido({ navigation }: any) {
 
    <Button
     title="Confirmar pedido"
-    onPress={() => console.log("Guardar pedido")}
+    onPress={confirmarPedido}
    />
 
   </View>

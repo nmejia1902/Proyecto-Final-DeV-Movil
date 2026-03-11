@@ -1,15 +1,33 @@
 import { Modal, View, TextInput, FlatList, TouchableOpacity, Text } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { api } from "../servicios/api";
 
 export default function ModalSeleccionCliente({ visible, setVisible, setCliente }: any){
 
  const [busqueda,setBusqueda] = useState("");
+ const [clientes,setClientes] = useState<any[]>([]);
 
- const clientes = [
-  {id:1,nombre:"Juan Perez"},
-  {id:2,nombre:"Ana Lopez"},
-  {id:3,nombre:"Carlos Mejia"}
- ];
+ useEffect(()=>{
+  if(visible){
+   cargarClientes();
+  }
+ },[visible]);
+
+ const cargarClientes = async () => {
+
+  try{
+
+   const res = await api.get("/clientes");
+
+   setClientes(res.data);
+
+  }catch(error){
+
+   console.log("Error cargando clientes",error);
+
+  }
+
+ };
 
  const filtrados = clientes.filter(c =>
   c.nombre.toLowerCase().includes(busqueda.toLowerCase())
