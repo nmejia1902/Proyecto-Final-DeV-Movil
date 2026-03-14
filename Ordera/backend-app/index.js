@@ -329,6 +329,6 @@ INICIO SERVIDOR
 
 sequelize.sync({ alter: true });
 
-app.listen(3000, "0.0.0.0", () => {
-  console.log("Servidor corriendo en puerto 3000");
+app.listen(5000, "0.0.0.0", () => {
+  console.log("Servidor corriendo en puerto 5000");
 });
