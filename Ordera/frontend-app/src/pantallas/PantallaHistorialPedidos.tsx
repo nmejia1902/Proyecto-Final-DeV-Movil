@@ -30,7 +30,7 @@ export default function PantallaHistorialPedidos(){
 
   <View style={styles.container}>
 
-   <Text style={styles.titulo}>Historial de pedidos</Text>
+   <Text style={styles.titulo}>📋 Historial de pedidos</Text>
 
    <FlatList
     data={pedidos}
@@ -40,18 +40,18 @@ export default function PantallaHistorialPedidos(){
      <View style={styles.card}>
 
       <Text style={styles.cliente}>
-       Cliente: {item.Cliente?.nombre}
+       👤 Cliente: {item.Cliente?.nombre}
       </Text>
 
-      <Text>
+      <Text style={styles.detalle}>
        Usuario: {item.Usuario?.usuario}
       </Text>
 
-      <Text>
+      <Text style={styles.total}>
        Total: L {item.total}
       </Text>
 
-      <Text>
+      <Text style={styles.estado}>
        Estado: {item.Estado?.nombre}
       </Text>
 
@@ -70,23 +70,49 @@ const styles = StyleSheet.create({
 
  container:{
   flex:1,
-  padding:20
+  padding:20,
+  backgroundColor:"#FFF6F2"
  },
 
  titulo:{
-  fontSize:22,
-  marginBottom:15
+  fontSize:26,
+  marginBottom:20,
+  fontWeight:"bold",
+  textAlign:"center",
+  color:"#5F5F5F"
  },
 
  card:{
-  borderWidth:1,
+  backgroundColor:"#FFFFFF",
   padding:15,
-  marginBottom:10,
-  borderRadius:8
+  marginBottom:12,
+  borderRadius:15,
+  shadowColor:"#000",
+  shadowOpacity:0.05,
+  shadowRadius:6,
+  elevation:2
  },
 
  cliente:{
-  fontWeight:"bold"
+  fontWeight:"bold",
+  fontSize:16,
+  color:"#444",
+  marginBottom:4
+ },
+
+ detalle:{
+  color:"#666",
+  marginBottom:4
+ },
+
+ total:{
+  fontWeight:"bold",
+  color:"#D16BA5",
+  marginBottom:4
+ },
+
+ estado:{
+  color:"#555"
  }
 
 });

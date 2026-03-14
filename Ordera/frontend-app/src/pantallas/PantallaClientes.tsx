@@ -17,15 +17,10 @@ export default function PantallaClientes() {
 
  const cargarClientes = async () => {
   try {
-
    const res = await api.get("/clientes");
-
    setClientes(res.data);
-
   } catch (error) {
-
    console.log("Error cargando clientes", error);
-
   }
  };
 
@@ -58,7 +53,7 @@ export default function PantallaClientes() {
  return (
   <View style={styles.container}>
 
-   <Text style={styles.titulo}>Clientes</Text>
+   <Text style={styles.titulo}>👥 Clientes</Text>
 
    {mostrarFormulario && (
 
@@ -66,6 +61,7 @@ export default function PantallaClientes() {
 
      <TextInput
       placeholder="Nombre"
+      placeholderTextColor="#999"
       value={nombre}
       onChangeText={setNombre}
       style={styles.input}
@@ -73,6 +69,7 @@ export default function PantallaClientes() {
 
      <TextInput
       placeholder="Telefono"
+      placeholderTextColor="#999"
       value={telefono}
       onChangeText={setTelefono}
       style={styles.input}
@@ -80,15 +77,19 @@ export default function PantallaClientes() {
 
      <TextInput
       placeholder="Direccion"
+      placeholderTextColor="#999"
       value={direccion}
       onChangeText={setDireccion}
       style={styles.input}
      />
 
-     <Button
-      title="Guardar cliente"
-      onPress={guardarCliente}
-     />
+     <View style={styles.boton}>
+      <Button
+       title="Guardar cliente"
+       color="#F8BBD0"
+       onPress={guardarCliente}
+      />
+     </View>
 
     </View>
 
@@ -102,21 +103,23 @@ export default function PantallaClientes() {
      <View style={styles.cliente}>
 
       <Text style={styles.nombre}>{item.nombre}</Text>
-      <Text>{item.telefono}</Text>
-      <Text>{item.direccion}</Text>
+      <Text style={styles.detalle}>{item.telefono}</Text>
+      <Text style={styles.detalle}>{item.direccion}</Text>
 
      </View>
 
     )}
    />
 
-   <Button
-    title="Agregar cliente"
-    onPress={() => {
-     console.log("abrir formulario");
-     setMostrarFormulario(true);
-    }}
-   />
+   <View style={styles.botonAgregar}>
+    <Button
+     title="Agregar cliente"
+     color="#B2DFDB"
+     onPress={() => {
+      setMostrarFormulario(true);
+     }}
+    />
+   </View>
 
   </View>
  );
@@ -126,33 +129,69 @@ const styles = StyleSheet.create({
 
  container:{
   flex:1,
-  padding:20
+  padding:20,
+  backgroundColor:"#FFF6F2"
  },
 
  titulo:{
-  fontSize:22,
-  marginBottom:10
+  fontSize:24,
+  marginBottom:15,
+  fontWeight:"bold",
+  color:"#5F5F5F",
+  textAlign:"center"
  },
 
  formulario:{
-  marginBottom:20
+  marginBottom:20,
+  backgroundColor:"#FFFFFF",
+  padding:15,
+  borderRadius:15,
+  shadowColor:"#000",
+  shadowOpacity:0.08,
+  shadowRadius:8,
+  elevation:4
  },
 
  input:{
   borderWidth:1,
-  borderColor:"#ccc",
+  borderColor:"#F8BBD0",
+  borderRadius:10,
   padding:10,
-  marginBottom:10
+  marginBottom:10,
+  backgroundColor:"#FFF"
  },
 
  cliente:{
-  padding:10,
-  borderBottomWidth:1,
-  borderBottomColor:"#eee"
+  backgroundColor:"#FFFFFF",
+  padding:15,
+  borderRadius:12,
+  marginBottom:10,
+  shadowColor:"#000",
+  shadowOpacity:0.05,
+  shadowRadius:5,
+  elevation:2
  },
 
  nombre:{
-  fontWeight:"bold"
+  fontWeight:"bold",
+  fontSize:16,
+  color:"#444"
+ },
+
+ detalle:{
+  color:"#666"
+ },
+
+ boton:{
+  marginTop:5,
+  borderRadius:10,
+  overflow:"hidden"
+ },
+
+ botonAgregar:{
+  marginTop:10,
+  borderRadius:10,
+  overflow:"hidden"
  }
 
 });
