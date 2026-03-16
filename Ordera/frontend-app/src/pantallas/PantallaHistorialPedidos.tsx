@@ -1,4 +1,4 @@
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import { View, Text, FlatList, StyleSheet, Button } from "react-native";
 import { useEffect, useState } from "react";
 import { api } from "../servicios/api";
 
@@ -26,6 +26,44 @@ export default function PantallaHistorialPedidos(){
   obtenerPedidos();
  },[]);
 
+ const cambiarEstado = async (pedidoId:number, estado:number) => {
+
+  try{
+
+   await api.put(`/pedidos/${pedidoId}/estado`,{
+    estado_id: estado
+   });
+
+   obtenerPedidos();
+
+  }catch(error){
+
+   console.log("Error cambiando estado",error);
+
+  }
+
+ };
+
+const colorEstado = (estadoId:number) => {
+
+ switch(estadoId){
+
+  case 1:
+   return "#FFD54F";   // Pendiente
+
+  case 2:
+   return "#FF8A65";   // En proceso
+
+  case 3:
+   return "#81C784";   // Entregado
+
+  default:
+   return "#ccc";
+
+ }
+
+};
+
  return(
 
   <View style={styles.container}>
@@ -51,9 +89,34 @@ export default function PantallaHistorialPedidos(){
        Total: L {item.total}
       </Text>
 
-      <Text style={styles.estado}>
-       Estado: {item.Estado?.nombre}
-      </Text>
+      <View style={styles.estadoContainer}>
+
+                <View
+                    style={[
+                        styles.estadoPunto,
+                        { backgroundColor: colorEstado(item.estado_id) }
+                    ]}
+                />
+
+       <Text style={styles.estadoTexto}>
+        {item.Estado?.nombre}
+       </Text>
+
+      </View>
+
+      {item.estado_id === 1 && (
+       <Button
+        title="Marcar en proceso"
+        onPress={()=>cambiarEstado(item.id,2)}
+       />
+      )}
+
+      {item.estado_id === 2 && (
+       <Button
+        title="Marcar entregado"
+        onPress={()=>cambiarEstado(item.id,3)}
+       />
+      )}
 
      </View>
 
@@ -108,10 +171,24 @@ const styles = StyleSheet.create({
  total:{
   fontWeight:"bold",
   color:"#D16BA5",
-  marginBottom:4
+  marginBottom:8
  },
 
- estado:{
+ estadoContainer:{
+  flexDirection:"row",
+  alignItems:"center",
+  marginBottom:10
+ },
+
+ estadoPunto:{
+  width:12,
+  height:12,
+  borderRadius:6,
+  marginRight:8
+ },
+
+ estadoTexto:{
+  fontWeight:"bold",
   color:"#555"
  }
 

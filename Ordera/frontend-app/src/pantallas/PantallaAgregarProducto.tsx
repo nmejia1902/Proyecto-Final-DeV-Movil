@@ -1,12 +1,34 @@
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, Image } from "react-native";
 import { useState } from "react";
 import { api } from "../servicios/api";
+import * as ImagePicker from "expo-image-picker";
 
 export default function PantallaAgregarProducto({ navigation }: any){
 
  const [nombre,setNombre] = useState("");
  const [precio,setPrecio] = useState("");
  const [descripcion,setDescripcion] = useState("");
+ const [imagen,setImagen] = useState<string | null>(null);
+
+ const tomarFoto = async () => {
+
+  const permiso = await ImagePicker.requestCameraPermissionsAsync();
+
+  if(!permiso.granted){
+   alert("Se necesita permiso para usar la cámara");
+   return;
+  }
+
+  const resultado = await ImagePicker.launchCameraAsync({
+   quality:0.7,
+   allowsEditing:true
+  });
+
+  if(!resultado.canceled){
+   setImagen(resultado.assets[0].uri);
+  }
+
+ };
 
  const guardarProducto = async () => {
 
@@ -15,7 +37,8 @@ export default function PantallaAgregarProducto({ navigation }: any){
    await api.post("/productos",{
     nombre,
     precio,
-    descripcion
+    descripcion,
+    imagen
    });
 
    navigation.goBack();
@@ -58,6 +81,21 @@ export default function PantallaAgregarProducto({ navigation }: any){
      onChangeText={setDescripcion}
      style={styles.input}
     />
+
+    <View style={styles.boton}>
+     <Button
+      title="Tomar foto del producto"
+      color="#B2DFDB"
+      onPress={tomarFoto}
+     />
+    </View>
+
+    {imagen && (
+      <Image
+       source={{ uri: imagen }}
+       style={styles.imagen}
+      />
+    )}
 
     <View style={styles.boton}>
      <Button
@@ -115,6 +153,13 @@ const styles = StyleSheet.create({
   marginTop:10,
   borderRadius:15,
   overflow:"hidden"
+ },
+
+ imagen:{
+  width:"100%",
+  height:200,
+  marginTop:15,
+  borderRadius:12
  }
 
 });

@@ -6,12 +6,17 @@ export const PedidoContext = createContext({
  setCliente: (cliente: any) => {},
 
  productos: [] as any[],
+
  agregarProducto: (producto: any) => {},
- eliminarProducto: (index: number) => {},
+
+ eliminarProducto: (id: number) => {},
+
+ actualizarCantidadProducto: (id: number, cantidad: number) => {},
 
  total: 0,
 
  confirmarPedido: async () => {},
+
  limpiarPedido: () => {}
 
 });

@@ -1,4 +1,4 @@
-import { View, Text, FlatList, Button, StyleSheet } from "react-native";
+import { View, Text, FlatList, Button, StyleSheet, Image } from "react-native";
 import { useEffect, useState } from "react";
 import { api } from "../servicios/api";
 
@@ -21,6 +21,20 @@ export default function PantallaEditarCatalogo({ navigation }: any){
   obtenerProductos();
  },[]);
 
+ const eliminarProducto = async (id:number) => {
+
+  try{
+
+   await api.delete(`/productos/${id}`);
+
+   obtenerProductos();
+
+  }catch(error){
+   console.log(error);
+  }
+
+ };
+
  return(
 
   <View style={styles.container}>
@@ -33,16 +47,27 @@ export default function PantallaEditarCatalogo({ navigation }: any){
     renderItem={({item}:any)=>(
      <View style={styles.item}>
 
-      <View>
+      <View style={styles.infoProducto}>
+
+       {item.imagen && (
+        <Image
+         source={{ uri: item.imagen }}
+         style={styles.imagen}
+        />
+       )}
+
+       <View>
         <Text style={styles.nombre}>{item.nombre}</Text>
         <Text style={styles.precio}>L {item.precio}</Text>
+       </View>
+
       </View>
 
       <View style={styles.botonEliminar}>
         <Button
          title="Eliminar"
          color="#FF8A80"
-         onPress={()=>console.log("eliminar")}
+         onPress={()=>eliminarProducto(item.id)}
         />
       </View>
 
@@ -92,6 +117,18 @@ const styles = StyleSheet.create({
   shadowOpacity:0.05,
   shadowRadius:5,
   elevation:2
+ },
+
+ infoProducto:{
+  flexDirection:"row",
+  alignItems:"center"
+ },
+
+ imagen:{
+  width:60,
+  height:60,
+  marginRight:10,
+  borderRadius:8
  },
 
  nombre:{

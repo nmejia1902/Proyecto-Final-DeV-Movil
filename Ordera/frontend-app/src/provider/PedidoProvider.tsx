@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { PedidoContext } from "../context/PedidoContext";
 import { api } from "../servicios/api";
+import { Alert } from "react-native";
 
 export default function PedidoProvider({ children }: any) {
 
@@ -8,41 +9,95 @@ export default function PedidoProvider({ children }: any) {
  const [productos, setProductos] = useState<any[]>([]);
 
  const agregarProducto = (producto: any) => {
-  setProductos([...productos, producto]);
+
+  setProductos(prev => {
+
+   const existe = prev.find((p:any) => p.id === producto.id);
+
+   if (existe) {
+
+    return prev.map((p:any) => {
+
+     if (p.id === producto.id) {
+
+      const nuevaCantidad = (p.cantidad ?? 1) + 1;
+
+      return {
+       ...p,
+       cantidad: nuevaCantidad,
+       subtotal: nuevaCantidad * Number(p.precio)
+      };
+
+     }
+
+     return p;
+
+    });
+
+   }
+
+   return [
+    ...prev,
+    {
+     ...producto,
+     cantidad: 1,
+     subtotal: Number(producto.precio)
+    }
+   ];
+
+  });
+
  };
 
- const eliminarProducto = (index: number) => {
+ const eliminarProducto = (id: number) => {
 
-  const nuevos = productos.filter((_, i) => i !== index);
-  setProductos(nuevos);
+  setProductos(prev => prev.filter((p:any) => p.id !== id));
 
  };
 
- const total = productos.reduce((sum, p) => sum + Number(p.precio || 0), 0);
+ const actualizarCantidadProducto = (id:number, cantidad:number) => {
+
+  setProductos(prev => prev.map((p:any) => {
+
+   if (p.id === id) {
+
+    return {
+     ...p,
+     cantidad,
+     subtotal: cantidad * Number(p.precio)
+    };
+
+   }
+
+   return p;
+
+  }));
+
+ };
+
+ const total = productos.reduce((sum, p) => sum + Number(p.subtotal || 0), 0);
 
  const limpiarPedido = () => {
   setCliente(null);
   setProductos([]);
  };
 
-const confirmarPedido = async () => {
+ const confirmarPedido = async () => {
 
- if (!cliente) {
-  alert("Seleccione un cliente");
-  return;
- }
+  if (!cliente) {
+   Alert.alert("Seleccione un cliente");
+   return;
+  }
 
- if (productos.length === 0) {
-  alert("Agregue productos al pedido");
-  return;
- }
-
- try {
+  if (productos.length === 0) {
+   Alert.alert("Agregue productos al pedido");
+   return;
+  }
 
   const detalles = productos.map((p: any) => ({
    producto_id: p.id,
-   cantidad: 1,
-   subtotal: Number(p.precio)
+   cantidad: p.cantidad,
+   subtotal: p.subtotal
   }));
 
   const body = {
@@ -51,38 +106,64 @@ const confirmarPedido = async () => {
    detalles
   };
 
-  console.log("Enviando pedido:", body);
+  const resumen = productos
+   .map((p:any)=>`${p.nombre} x${p.cantidad} - L ${p.subtotal}`)
+   .join("\n");
 
-  await api.post("/pedidos", body);
+  Alert.alert(
+   "Confirmar pedido",
+   `Cliente: ${cliente.nombre}\n\n${resumen}\n\nTotal: L ${total}`,
+   [
+    {
+     text: "Cancelar",
+     style: "cancel"
+    },
+    {
+     text: "Confirmar",
+     onPress: async () => {
 
-  alert("Pedido registrado correctamente");
+      try {
 
-  limpiarPedido();
+       console.log("Enviando pedido:", body);
 
- } catch (error: any) {
+       await api.post("/pedidos", body);
 
-  console.log("Error backend:", error.response?.data || error);
-  alert("Error al registrar el pedido");
+       Alert.alert("Pedido registrado correctamente");
 
- }
+       limpiarPedido();
 
-};
+      } catch (error:any) {
+
+       console.log("Error backend:", error.response?.data || error);
+       Alert.alert("Error al registrar el pedido");
+
+      }
+
+     }
+    }
+   ]
+  );
+
+ };
 
  return (
 
   <PedidoContext.Provider
    value={{
+
     cliente,
     setCliente,
 
     productos,
     agregarProducto,
     eliminarProducto,
+    actualizarCantidadProducto,
 
     total,
 
     confirmarPedido,
     limpiarPedido
+
    }}
   >
 

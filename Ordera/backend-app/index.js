@@ -323,6 +323,55 @@ app.post("/productos", async (req, res) => {
 
 });
 
+app.delete("/productos/:id", async (req, res) => {
+
+  try {
+
+    const producto = await Producto.findByPk(req.params.id);
+
+    if (!producto) {
+      return res.status(404).json({ msg: "Producto no encontrado" });
+    }
+
+    await producto.destroy();
+
+    res.status(200).json({
+      msg: "Producto eliminado correctamente"
+    });
+
+  } catch (error) {
+
+    res.status(500).json({ error: error.message || error });
+
+  }
+
+});
+
+app.put("/pedidos/:id/estado", async (req, res) => {
+
+ const { estado_id } = req.body;
+
+ try {
+
+  const pedido = await Pedido.findByPk(req.params.id);
+
+  if (!pedido) {
+   return res.status(404).json({ msg: "Pedido no encontrado" });
+  }
+
+  await pedido.update({ estado_id });
+
+  res.status(200).json({
+   msg: "Estado actualizado",
+   data: pedido
+  });
+
+ } catch (error) {
+  res.status(500).json({ error: error.message || error });
+ }
+
+});
+
 /* =========================================
 INICIO SERVIDOR
 ========================================= */
